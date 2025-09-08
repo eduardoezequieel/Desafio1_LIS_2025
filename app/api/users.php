@@ -1,11 +1,14 @@
 <?php
 
+require_once __DIR__ . '/../config/Validator.php';
+require_once __DIR__ . '/../models/user.php';
+
 use App\Config\Validator;
+use App\Models\User;
 
 if (isset($_GET['action'])) {
     session_start();
     $result = array(
-        'status' => 0,
         'message' => null,
         'exception' => null
     );
@@ -14,19 +17,35 @@ if (isset($_GET['action'])) {
         case 'logIn':
             $_POST = Validator::validateForm($_POST);
 
-            if ($_POST['username']) {
-                if ($_POST['password']) {
-                    $result['message'] = "Login with {$_POST['username']} and {$_POST['password']}";
+            $user = User::fromCredentials($_POST['username'], $_POST['password']);
+            $errors = $user->validateFields();
+
+            error_log("Usuario recibido: " . $user->getUsername());
+
+            if (empty($errors)) {
+                $validLogin = true;
+
+                error_log("Usuario: " . $user->getUsername());
+
+                if ($validLogin) {
+                    $_SESSION['user'] = $user;
+                    $result['message'] = 'Autenticación exitosa';
+                    http_response_code(200);
                 } else {
-                    $result['exception'] = 'Password is required';
+                    error_log("Error de autenticación para el usuario: " . $user->getUsername());
+                    $result['exception'] = 'Credenciales inválidas';
+                    http_response_code(401);
                 }
             } else {
-                $result['exception'] = 'Username is required';
+                $result['exception'] = $errors;
+                $result['message'] = 'Existen campos inválidos';
+                http_response_code(400);
             }
             break;
 
         default:
             $result['message'] = 'Invalid endpoint';
+            http_response_code(404);
             break;
     }
 

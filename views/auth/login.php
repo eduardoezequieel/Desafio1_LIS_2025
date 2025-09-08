@@ -18,6 +18,6 @@
 		</div>
     <button type="submit">Iniciar sesión</button>
 	</form>
-	<script src="/resources/js/auth/login.js"></script>
+	<script src="../resources/js/auth/login.js"></script>
 </body>
 </html>

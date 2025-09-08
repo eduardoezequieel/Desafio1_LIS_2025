@@ -1,9 +1,9 @@
-const API_USERS = "../../app/api/users.php?action=";
+const API_USERS = "/DesafioLIS_Ciclo2_2025/app/api/users.php?action=";
 
 document.querySelector("#login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const response = await fetch(API_USERS + "login", {
+  const response = await fetch(API_USERS + "logIn", {
     method: "POST",
     body: new FormData(e.target),
   });

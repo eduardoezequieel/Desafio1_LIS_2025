@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Models;
+
+require_once __DIR__ . '/../config/Database.php';
 use App\Config\Database;
 
 class User
@@ -9,6 +12,20 @@ class User
     private string $password_hash;
     private string $created_at;
     private string $updated_at;
+
+    public function __construct(
+        int $id,
+        string $username,
+        string $password_hash,
+        string $created_at,
+        string $updated_at
+    ) {
+        $this->id = $id;
+        $this->username = $username;
+        $this->password_hash = $password_hash;
+        $this->created_at = $created_at;
+        $this->updated_at = $updated_at;
+    }
 
     public function getId(): int
     {
@@ -60,11 +77,36 @@ class User
         $this->updated_at = $updated_at;
     }
 
-    public function checkLogIn()
+    public function validateFields(): array
     {
-        $sql = 'SELECT * FROM users WHERE username = ?';
-        $params = array($this->username);
-
-        return Database::getRows($sql, $params);
+        $errors = [];
+        if (empty($this->username)) {
+            $errors[] = 'Username is required.';
+        }
+        if (empty($this->password_hash)) {
+            $errors[] = 'Password is required.';
+        }
+        return $errors;
     }
+
+    public function checkCredentials(): bool
+    {
+        $sql = "SELECT * FROM users WHERE username = ?";
+        $params = [$this->username];
+        $response = Database::getRows($sql, $params);
+
+        if ($response && count($response) === 1) {
+            $user = $response[0];
+            return $this->password_hash === $user['password_hash'];
+        } else {
+            return false;
+        }
+    }
+
+    public static function fromCredentials(string $username, string $password_hash): self
+    {
+        return new self(0, $username, $password_hash, '', '');
+    }
+
+
 }
