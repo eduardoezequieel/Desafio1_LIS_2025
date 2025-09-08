@@ -1,4 +1,4 @@
-const API_USERS = "/DesafioLIS_Ciclo2_2025/app/api/users.php?action=";
+const API_USERS = "/Desafio1_LIS_2025/app/api/users.php?action=";
 
 document.querySelector("#login-form").addEventListener("submit", async (e) => {
   e.preventDefault();

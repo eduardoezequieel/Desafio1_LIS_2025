@@ -23,7 +23,7 @@ if (isset($_GET['action'])) {
             error_log("Usuario recibido: " . $user->getUsername());
 
             if (empty($errors)) {
-                $validLogin = true;
+                $validLogin = $user->checkCredentials();
 
                 error_log("Usuario: " . $user->getUsername());
 
@@ -51,4 +51,7 @@ if (isset($_GET['action'])) {
 
     header('content-type: application/json; charset=utf-8');
     print(json_encode($result));
+} else {
+    print(json_encode('Recurso no disponible'));
+    http_response_code(404);
 }
