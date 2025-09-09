@@ -42,7 +42,16 @@ if (isset($_GET['action'])) {
                 http_response_code(400);
             }
             break;
-
+        case 'seed':
+            $user = User::fromCredentials('admin', 'admin123');
+            if ($user->generateAdmin()) {
+                $result['message'] = 'Admin user created successfully';
+                http_response_code(201);
+            } else {
+                $result['exception'] = 'Error creating admin user';
+                http_response_code(500);
+            }
+            break;
         default:
             $result['message'] = 'Invalid endpoint';
             http_response_code(404);

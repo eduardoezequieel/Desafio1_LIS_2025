@@ -73,8 +73,7 @@ class User
     }
 
     public function setUpdatedAt(string $updated_at): void
-    {
-        $this->updated_at = $updated_at;
+    { 
     }
 
     public function validateFields(): array
@@ -97,10 +96,17 @@ class User
 
         if ($response && count($response) === 1) {
             $user = $response[0];
-            return $this->password_hash === $user['password_hash'];
+            return password_verify($this->password_hash, $user['password_hash']);
         } else {
             return false;
         }
+    }
+
+    public function generateAdmin()
+    {
+        $sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
+        $params = [$this->username, password_hash($this->password_hash, PASSWORD_BCRYPT)];
+        return Database::executeRow($sql, $params);
     }
 
     public static function fromCredentials(string $username, string $password_hash): self
