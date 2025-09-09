@@ -1,0 +1,14 @@
+#login-form {
+  background-color: #393957;
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 8px 24px;
+  padding: 40px;
+}
+
+@media (max-width: 600px) {
+  #login-form {
+    padding: 20px;
+    max-width: 100%;
+  }
+}
