@@ -73,17 +73,17 @@ class User
     }
 
     public function setUpdatedAt(string $updated_at): void
-    { 
+    {
     }
 
     public function validateFields(): array
     {
         $errors = [];
         if (empty($this->username)) {
-            $errors[] = 'Username is required.';
+            $errors[] = 'El usuario es requerido';
         }
         if (empty($this->password_hash)) {
-            $errors[] = 'Password is required.';
+            $errors[] = 'La contraseña es requerida';
         }
         return $errors;
     }

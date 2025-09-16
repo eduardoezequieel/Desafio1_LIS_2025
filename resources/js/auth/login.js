@@ -10,5 +10,14 @@ document.querySelector("#login-form").addEventListener("submit", async (e) => {
 
   const data = await response.json();
 
-  console.log(data);
+  if (await !response.ok) {
+    showMessage("error", "Error", data.exception);
+    return;
+  }
+
+  showMessage("success", "Éxito", "¡Has iniciado sesión correctamente!").then(
+    () => {
+      window.location.href = "/Desafio1_LIS_2025/public/dashboard";
+    }
+  );
 });

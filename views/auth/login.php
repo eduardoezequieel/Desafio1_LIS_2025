@@ -1,5 +1,14 @@
+<?php
+session_start();
+
+if (isset($_SESSION['user'])) {
+    header('Location: /Desafio1_LIS_2025/public/dashboard');
+    exit();
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="es" data-bs-theme="dark">
 
 <head>
 	<meta charset="UTF-8">
@@ -7,7 +16,7 @@
 	<link rel="stylesheet" href="/Desafio1_LIS_2025/resources/css/globals.css">
 	<link rel="stylesheet" href="/Desafio1_LIS_2025/resources/css/login.css">
 	<link href="/Desafio1_LIS_2025/resources/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
-	<title>Document</title>
+	<title>Iniciar sesión</title>
 </head>
 
 <body>
@@ -23,11 +32,13 @@
 				<input type="password" name="password" id="password-input" class="form-control">
 			</div>
 			<div class="d-grid gap-2">
-				<button class="btn btn-primary" type="button">Iniciar sesión</button>
+				<button class="btn btn-primary" type="submit">Iniciar sesión</button>
 			</div>
 		</form>
 	</div>
 	<script src="/Desafio1_LIS_2025/resources/lib/bootstrap/bootstrap.bundle.min.js"></script>
+	<script src="/Desafio1_LIS_2025/resources/lib/swal/sweetalert2@11.js"></script>
+	<script src="/Desafio1_LIS_2025/resources/js/components.js"></script>
 	<script src="/Desafio1_LIS_2025/resources/js/auth/login.js"></script>
 </body>
 

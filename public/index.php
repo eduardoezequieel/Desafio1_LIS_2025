@@ -6,7 +6,11 @@ switch ($url) {
     case 'login':
         require_once __DIR__ . '/../views/auth/login.php';
         break;
+    case 'dashboard':
+        require_once __DIR__ . '/../views/dashboard/index.php';
+        break;
     default:
         http_response_code(404);
-        echo 'Pagina no encontrada';
+        require_once __DIR__ . '/../views/404.php';
+        break;
 }

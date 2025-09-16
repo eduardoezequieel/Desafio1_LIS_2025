@@ -42,6 +42,11 @@ if (isset($_GET['action'])) {
                 http_response_code(400);
             }
             break;
+        case 'logOut':
+            session_destroy();
+            $result['message'] = 'Sesión cerrada exitosamente';
+            http_response_code(200);
+            break;
         case 'seed':
             $user = User::fromCredentials('admin', 'admin123');
             if ($user->generateAdmin()) {
