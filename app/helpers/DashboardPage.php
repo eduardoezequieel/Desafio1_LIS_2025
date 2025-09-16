@@ -32,7 +32,7 @@ class DashboardPage
                         <a href="/Desafio1_LIS_2025/public/dashboard">Inicio</a>
                     </li>
                     <li class="nav-item ' . ($currentUrl === '/Desafio1_LIS_2025/public/dashboard/users' ? 'active' : '') . '">
-                        <a href="/Desafio1_LIS_2025/public/dashboard">Inicio</a>
+                        <a href="/Desafio1_LIS_2025/public/dashboard/users">Usuarios</a>
                     </li>
                     <li class="nav-item" id="logout-link">
                         <a>Cerrar sesión</a>

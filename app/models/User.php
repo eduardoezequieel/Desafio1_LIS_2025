@@ -88,7 +88,14 @@ class User
         return $errors;
     }
 
-    public function checkCredentials(): bool
+    public function getUsers(int $idToExclude): array|false
+    {
+        $sql = "SELECT id, username, created_at, updated_at FROM users WHERE id != ?";
+        $params = [$idToExclude];
+        return Database::getRows($sql, $params);
+    }
+
+    public function checkCredentials(): User|false
     {
         $sql = "SELECT * FROM users WHERE username = ?";
         $params = [$this->username];
@@ -96,10 +103,18 @@ class User
 
         if ($response && count($response) === 1) {
             $user = $response[0];
-            return password_verify($this->password_hash, $user['password_hash']);
-        } else {
-            return false;
+            if (password_verify($this->password_hash, $user['password_hash'])) {
+                return new self(
+                    $user['id'],
+                    $user['username'],
+                    '',
+                    $user['created_at'],
+                    $user['updated_at']
+                );
+            }
         }
+
+        return false;
     }
 
     public function generateAdmin()
@@ -112,6 +127,11 @@ class User
     public static function fromCredentials(string $username, string $password_hash): self
     {
         return new self(0, $username, $password_hash, '', '');
+    }
+
+    public static function empty(): self
+    {
+        return new self(0, '', '', '', '');
     }
 
 
