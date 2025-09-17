@@ -3,7 +3,7 @@ use App\Helpers\DashboardPage;
 
 require_once __DIR__ . '/../../app/helpers/DashboardPage.php';
 
-DashboardPage::getSidebarTemplate('Dashboard');
+DashboardPage::getSidebarTemplate('Dashboard', []);
 DashboardPage::getHeaderTemplate('Welcome');
 ?>   
     <main class="content">

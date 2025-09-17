@@ -138,13 +138,15 @@ const fetchUsers = async () => {
     });
 
     document.querySelectorAll(".delete-user-btn").forEach((btn, index) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const user = data[index];
-        if (
-          confirm(
-            `¿Estás seguro de que deseas eliminar al usuario ${user.username}?`
-          )
-        ) {
+
+        const { isConfirmed } = await confirmAction(
+          "Confirmar eliminación",
+          `¿Estás seguro de que deseas eliminar al usuario ${user.username}? Esta acción no se puede deshacer.`
+        );
+
+        if (isConfirmed) {
           deleteUser(user.id);
         }
       });

@@ -3,7 +3,7 @@ use App\Helpers\DashboardPage;
 
 require_once __DIR__ . '/../../app/helpers/DashboardPage.php';
 
-DashboardPage::getSidebarTemplate('Usuarios');
+DashboardPage::getSidebarTemplate('Usuarios', []);
 DashboardPage::getHeaderTemplate('Usuarios', [
     [
         'class' => 'btn-success',

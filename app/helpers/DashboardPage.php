@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class DashboardPage
 {
-    public static function getSidebarTemplate(string $title): void
+    public static function getSidebarTemplate(string $title, array $styles): void
     {
         $currentUrl = $_SERVER['REQUEST_URI'];
 
@@ -16,6 +16,12 @@ class DashboardPage
             exit();
         }
 
+        $stylesHtml = '';
+
+        foreach ($styles as $style) {
+            $stylesHtml .= '<link rel="stylesheet" href="' . $style . '">' . "\n";
+        }
+
         print('
             <!DOCTYPE html>
             <html lang="es" data-bs-theme="dark">
@@ -24,6 +30,7 @@ class DashboardPage
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <link rel="stylesheet" href="/Desafio1_LIS_2025/resources/css/globals.css">
                 <link rel="stylesheet" href="/Desafio1_LIS_2025/resources/css/dashboard.css">
+                ' . $stylesHtml . '
                 <link href="/Desafio1_LIS_2025/resources/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
                 <title>' . $title . '</title>
             </head>
@@ -37,6 +44,9 @@ class DashboardPage
                     </li>
                     <li class="nav-item ' . ($currentUrl === '/Desafio1_LIS_2025/public/dashboard/users' ? 'active' : '') . '">
                         <a href="/Desafio1_LIS_2025/public/dashboard/users">Usuarios</a>
+                    </li>
+                    <li class="nav-item ' . ($currentUrl === '/Desafio1_LIS_2025/public/dashboard/incomes' ? 'active' : '') . '">
+                        <a href="/Desafio1_LIS_2025/public/dashboard/incomes">Entradas</a>
                     </li>
                     <li class="nav-item" id="logout-link">
                         <a>Cerrar sesión</a>
