@@ -7,7 +7,10 @@ class DashboardPage
     public static function getSidebarTemplate(string $title): void
     {
         $currentUrl = $_SERVER['REQUEST_URI'];
+
+        require_once __DIR__ . '/../models/user.php';
         session_start();
+
         if (!isset($_SESSION['user'])) {
             header('Location: /Desafio1_LIS_2025/public/login');
             exit();
@@ -27,7 +30,8 @@ class DashboardPage
             <body>
             <aside class="sidebar">
                 <h5>Dashboard</h5>
-                <ul class="nav flex-column">
+                <span>Bienvenido, ' . htmlspecialchars($_SESSION['user']->getUsername()) . '</span>
+                <ul class="nav flex-column mt-4">
                     <li class="nav-item ' . ($currentUrl === '/Desafio1_LIS_2025/public/dashboard' ? 'active' : '') . '">
                         <a href="/Desafio1_LIS_2025/public/dashboard">Inicio</a>
                     </li>
@@ -56,8 +60,9 @@ class DashboardPage
                 $text = $button['text'] ?? 'Action';
                 $id = isset($button['id']) ? ' id="' . $button['id'] . '"' : '';
                 $onClick = isset($button['onClick']) ? ' onclick="' . $button['onClick'] . '"' : '';
+                $type = isset($button['type']) ? ' type="' . $button['type'] . '"' : '';
 
-                $buttonsHtml .= '<button class="btn ' . $class . '"' . $id . $onClick . '>' . $text . '</button>' . "\n";
+                $buttonsHtml .= '<button class="btn ' . $class . '"' . $id . $onClick . $type . '>' . $text . '</button>' . "\n";
             }
         }
 

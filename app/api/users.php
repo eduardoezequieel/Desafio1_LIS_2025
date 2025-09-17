@@ -15,12 +15,69 @@ if (isset($_GET['action'])) {
 
     if (isset($_SESSION['user'])) {
         switch ($_GET['action']) {
+            case 'createUser':
+                $_POST = Validator::validateForm($_POST);
+
+                $user = User::fromCredentials($_POST['username'], $_POST['password']);
+                $errors = $user->validateFields();
+
+                if (empty($errors)) {
+                    if ($user->createUser()) {
+                        $result['message'] = 'Usuario creado exitosamente';
+                        http_response_code(201);
+                    } else {
+                        $result['exception'] = 'Error al crear el usuario. Es posible que el nombre de usuario ya exista.';
+                        http_response_code(500);
+                    }
+                } else {
+                    $result['exception'] = $errors;
+                    $result['message'] = 'Existen campos inválidos';
+                    http_response_code(400);
+                }
+                break;
+            case 'updateUser':
+                $_POST = Validator::validateForm($_POST);
+
+                $user = User::fromCredentials($_POST['username'], $_POST['password']);
+                $user->setId(intval($_POST['id']));
+                $errors = $user->validateFields();
+
+                if (empty($errors)) {
+                    if ($user->updateUser()) {
+                        $result['message'] = 'Usuario actualizado exitosamente';
+                        http_response_code(200);
+                    } else {
+                        $result['exception'] = 'Error al actualizar el usuario. Es posible que el nombre de usuario ya exista.';
+                        http_response_code(500);
+                    }
+                } else {
+                    $result['exception'] = $errors;
+                    $result['message'] = 'Existen campos inválidos';
+                    http_response_code(400);
+                }
+                break;
+            case 'deleteUser':
+                $userId = intval($_GET['id']);
+                $currentUserId = $_SESSION['user']->getId();
+                if ($userId === $currentUserId) {
+                    $result['exception'] = 'No puedes eliminar tu propio usuario';
+                    http_response_code(400);
+                } else {
+                    $user = User::empty();
+                    if ($user->deleteUser($userId)) {
+                        $result['message'] = 'Usuario eliminado exitosamente';
+                        http_response_code(200);
+                    } else {
+                        $result['exception'] = 'Error al eliminar el usuario. Es posible que el usuario no exista.';
+                        http_response_code(500);
+                    }
+                }
+                // no break
             case 'getUsers':
-                $currentId = $_SESSION['user']['id'];
+                $currentId = $_SESSION['user']->getId();
                 $user = User::empty();
                 $data = $user->getUsers($currentId);
                 if ($data) {
-                    $result['message'] = 'Existen ' . count($data) . ' usuarios registrados';
                     $result['data'] = $data;
                     http_response_code(200);
                 } else {

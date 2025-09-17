@@ -18,6 +18,14 @@
   --bs-btn-disabled-border-color: #eb5c91 !important;
 }
 
+.modal-header {
+  border-bottom: 1px solid #37374d !important;
+}
+
+.modal-footer {
+  border-top: 1px solid #37374d !important;
+}
+
 .swal2-confirm {
   background-color: #eb5c91 !important;
 }

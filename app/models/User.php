@@ -90,7 +90,7 @@ class User
 
     public function getUsers(int $idToExclude): array|false
     {
-        $sql = "SELECT id, username, created_at, updated_at FROM users WHERE id != ?";
+        $sql = "SELECT id, username, created_at, updated_at FROM users WHERE id != ? AND username != 'admin'";
         $params = [$idToExclude];
         return Database::getRows($sql, $params);
     }
@@ -115,6 +115,27 @@ class User
         }
 
         return false;
+    }
+
+    public function createUser(): bool
+    {
+        $sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
+        $params = [$this->username, password_hash($this->password_hash, PASSWORD_BCRYPT)];
+        return Database::executeRow($sql, $params);
+    }
+
+    public function deleteUser(int $id): bool
+    {
+        $sql = "DELETE FROM users WHERE id = ?";
+        $params = [$id];
+        return Database::executeRow($sql, $params);
+    }
+
+    public function updateUser(): bool
+    {
+        $sql = "UPDATE users SET username = ?, password_hash = ? WHERE id = ?";
+        $params = [$this->username, password_hash($this->password_hash, PASSWORD_BCRYPT), $this->id];
+        return Database::executeRow($sql, $params);
     }
 
     public function generateAdmin()
