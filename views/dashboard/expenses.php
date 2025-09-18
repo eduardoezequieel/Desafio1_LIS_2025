@@ -3,14 +3,14 @@ use App\Helpers\DashboardPage;
 
 require_once __DIR__ . '/../../app/helpers/DashboardPage.php';
 
-DashboardPage::getSidebarTemplate('Entradas', [
+DashboardPage::getSidebarTemplate('Salidas', [
     '/Desafio1_LIS_2025/resources/css/incomes.css'
 ]);
-DashboardPage::getHeaderTemplate('Entradas', [
+DashboardPage::getHeaderTemplate('Salidas', [
     [
         'class' => 'btn-success',
-        'text' => 'Registrar entrada',
-        'id' => 'new-income-btn',
+        'text' => 'Registrar salida',
+        'id' => 'new-expense-btn',
     ]
 ]);
 ?>   
@@ -26,25 +26,25 @@ DashboardPage::getHeaderTemplate('Entradas', [
                     <th scope="col">Acciones</th>
                 </tr>
             </thead>
-            <tbody id="incomes-table-body">
+            <tbody id="expenses-table-body">
                 
             </tbody>
         </table>
         </div>
     </main>
-    <div class="modal fade" id="incomeModal" tabindex="-1" aria-labelledby="income-modal-label" aria-hidden="true">
+    <div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="expense-modal-label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="income-modal-label">Registrar entrada</h1>
+                    <h1 class="modal-title fs-5" id="expense-modal-label">Registrar salida</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="income-form" method="POST" class="d-flex flex-column gap-2">
-                        <input type="hidden" name="id" id="income-id">
+                    <form id="expense-form" method="POST" class="d-flex flex-column gap-2">
+                        <input type="hidden" name="id" id="expense-id">
                         <div class="form-group">
-                            <label for="income-type">Categoría</label>
-                            <select name="category_id" id="income-type" class="form-select" required>
+                            <label for="expense-type">Categoría</label>
+                            <select name="category_id" id="expense-type" class="form-select" required>
                                 
                             </select>
                         </div>
@@ -71,14 +71,14 @@ DashboardPage::getHeaderTemplate('Entradas', [
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="save-income-btn" type="button" class="btn btn-primary">Guardar cambios</button>
+                    <button id="save-expense-btn" type="button" class="btn btn-primary">Guardar cambios</button>
                 </div>
             </div>
         </div>
     </div>
     <?php
     DashboardPage::getFooterTemplate([
-        '/Desafio1_LIS_2025/resources/js/dashboard/incomes.js'
+        '/Desafio1_LIS_2025/resources/js/dashboard/expenses.js'
     ]);
 ?>   
 </body>

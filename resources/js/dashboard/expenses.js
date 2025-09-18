@@ -1,24 +1,26 @@
 const API_TRANSACTIONS = "/Desafio1_LIS_2025/app/api/transactions.php?action=";
 
-const addBtn = document.getElementById("new-income-btn");
-const form = document.getElementById("income-form");
-const incomeLabel = document.getElementById("income-modal-label");
-const saveIncomeBtn = document.getElementById("save-income-btn");
-const incomeModal = new bootstrap.Modal(document.getElementById("incomeModal"));
+const addBtn = document.getElementById("new-expense-btn");
+const form = document.getElementById("expense-form");
+const expenseLabel = document.getElementById("expense-modal-label");
+const saveExpenseBtn = document.getElementById("save-expense-btn");
+const expenseModal = new bootstrap.Modal(
+  document.getElementById("expenseModal")
+);
 const invoicePreviewFileContainer = document.getElementById(
   "invoice-preview-file-container"
 );
-const incomeTypesSelect = document.getElementById("income-type");
+const expenseTypesSelect = document.getElementById("expense-type");
 const invoicePreviewFileInput = document.getElementById("invoiceImage");
 
-let incomeModalMode = "create"; // 'create' o 'edit'
+let expenseModalMode = "create"; // 'create' o 'edit'
 let currentInvoicePath = null; // Add this variable to track the existing invoice path
 
 addBtn.addEventListener("click", () => {
   resetForm();
-  incomeModal.show();
-  incomeModalMode = "create";
-  incomeLabel.textContent = "Registrar entrada";
+  expenseModal.show();
+  expenseModalMode = "create";
+  expenseLabel.textContent = "Registrar gasto";
 });
 
 const handleDeleteImage = (e) => {
@@ -99,28 +101,28 @@ invoicePreviewFileContainer.addEventListener("dragleave", () => {
   invoicePreviewFileContainer.classList.remove("dragover");
 });
 
-saveIncomeBtn.addEventListener("click", () => form.requestSubmit());
+saveExpenseBtn.addEventListener("click", () => form.requestSubmit());
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const formData = new FormData(form);
 
-  // Set transaction type to income
-  formData.append("transaction_type", "income");
+  // Set transaction type to expense
+  formData.append("transaction_type", "expense");
 
-  if (formData.get("id") === "" && incomeModalMode === "edit") {
+  if (formData.get("id") === "" && expenseModalMode === "edit") {
     showMessage(
       "error",
       "Error",
-      "No se ha proporcionado un ID de entrada válido para la edición."
+      "No se ha proporcionado un ID de gasto válido para la edición."
     );
     return;
   }
 
   // Add the current invoice path to the form data if in edit mode and no new file selected
   if (
-    incomeModalMode === "edit" &&
+    expenseModalMode === "edit" &&
     !formData.get("invoiceImage").size &&
     currentInvoicePath
   ) {
@@ -129,7 +131,7 @@ form.addEventListener("submit", async (e) => {
 
   const response = await fetch(
     API_TRANSACTIONS +
-      (incomeModalMode === "create"
+      (expenseModalMode === "create"
         ? "createTransaction"
         : "updateTransaction"),
     {
@@ -146,25 +148,25 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  incomeModal.hide();
+  expenseModal.hide();
   resetForm();
-  fetchIncomes();
+  fetchExpenses();
 
   showMessage(
     "success",
     "Éxito",
-    `Entrada ${
-      incomeModalMode === "create" ? "creada" : "actualizada"
+    `Gasto ${
+      expenseModalMode === "create" ? "creado" : "actualizado"
     } correctamente`
   );
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  fetchIncomeTypes();
-  fetchIncomes();
+  fetchExpenseTypes();
+  fetchExpenses();
 });
 
-const deleteIncome = async (id) => {
+const deleteExpense = async (id) => {
   const formData = new FormData();
   formData.append("id", id);
 
@@ -179,7 +181,7 @@ const deleteIncome = async (id) => {
   );
   if (response.ok) {
     const { message } = await response.json();
-    fetchIncomes();
+    fetchExpenses();
     showMessage("success", "Éxito", message);
   } else {
     const { exception } = await response.json();
@@ -196,13 +198,16 @@ const resetForm = () => {
   currentInvoicePath = null; // Reset the current invoice path when form is reset
 };
 
-const fetchIncomeTypes = async () => {
-  const response = await fetch(API_TRANSACTIONS + "getCategories&type=income", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+const fetchExpenseTypes = async () => {
+  const response = await fetch(
+    API_TRANSACTIONS + "getCategories&type=expense",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     const { exception } = await response.json();
@@ -218,7 +223,7 @@ const fetchIncomeTypes = async () => {
     html += `<option value="${category.id}">${category.name}</option>`;
   });
 
-  incomeTypesSelect.innerHTML = html;
+  expenseTypesSelect.innerHTML = html;
 };
 
 const handleOpenInvoicePreview = (image) => {
@@ -247,9 +252,9 @@ const handleOpenInvoicePreview = (image) => {
   }
 };
 
-const fetchIncomes = async () => {
+const fetchExpenses = async () => {
   const response = await fetch(
-    API_TRANSACTIONS + "getTransactions&type=income",
+    API_TRANSACTIONS + "getTransactions&type=expense",
     {
       method: "GET",
       headers: {
@@ -261,20 +266,20 @@ const fetchIncomes = async () => {
   if (response.ok || response.status === 201 || response.status === 404) {
     const { data } = await response.json();
 
-    const tbody = document.querySelector("#incomes-table-body");
+    const tbody = document.querySelector("#expenses-table-body");
 
     let html = "";
 
     if (!data) {
       html = `
         <tr>
-          <td colspan="5" class="text-center">No hay entradas registradas</td>
+          <td colspan="5" class="text-center">No hay gastos registrados</td>
         </tr>
       `;
     }
 
     if (data?.length > 0 && data instanceof Array) {
-      data.forEach((income) => {
+      data.forEach((expense) => {
         const dateTimeOptions = {
           year: "numeric",
           month: "numeric",
@@ -284,24 +289,24 @@ const fetchIncomes = async () => {
         const formattedAmount = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
-        }).format(income.amount);
+        }).format(expense.amount);
 
         // Fix date handling - create date in local timezone
-        const dateParts = income.date.split("-");
+        const dateParts = expense.date.split("-");
         const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
 
         html += `
             <tr>
-                <th scope="row">${income.id}</th>
+                <th scope="row">${expense.id}</th>
                 <td class="pt-2">${formattedAmount}</td>
-                <td class="pt-2">${income.category_name}</td>
+                <td class="pt-2">${expense.category_name}</td>
                 <td class="pt-2">${date.toLocaleString(
                   undefined,
                   dateTimeOptions
                 )}</td>
                 <td>
-                    <button class="btn btn-sm btn-secondary edit-income-btn">Editar</button>
-                    <button class="btn btn-sm btn-danger delete-income-btn">Eliminar</button>
+                    <button class="btn btn-sm btn-secondary edit-expense-btn">Editar</button>
+                    <button class="btn btn-sm btn-danger delete-expense-btn">Eliminar</button>
                 </td>
             </tr>
         `;
@@ -310,25 +315,26 @@ const fetchIncomes = async () => {
 
     tbody.innerHTML = html;
 
-    document.querySelectorAll(".edit-income-btn").forEach((btn, index) => {
+    document.querySelectorAll(".edit-expense-btn").forEach((btn, index) => {
       btn.addEventListener("click", () => {
         resetForm();
-        incomeLabel.textContent = "Editar entrada";
+        expenseLabel.textContent = "Editar gasto";
 
-        const income = data[index];
+        const expense = data[index];
 
-        form.id.value = income.id;
-        form.amount.value = income.amount;
-        form.date.value = income.date.split(" ")[0];
-        form["category_id"].value = income.category_id;
+        form.id.value = expense.id;
+        form.amount.value = expense.amount;
+        form.date.value = expense.date.split(" ")[0];
+        form["category_id"].value = expense.category_id;
+        form["description"].value = expense.description || "";
 
         // Store the current invoice path
-        currentInvoicePath = income.invoice_path;
+        currentInvoicePath = expense.invoice_path;
 
-        invoicePreviewFileContainer.innerHTML = income.invoice_path
+        invoicePreviewFileContainer.innerHTML = expense.invoice_path
           ? `
           <div class="w-100 h-25 d-flex justify-content-between align-items-center px-2">
-            <span class="text-white">${income.invoice_path
+            <span class="text-white">${expense.invoice_path
               .split("/")
               .pop()}</span>
             <div class="d-flex gap-2">
@@ -351,7 +357,7 @@ const fetchIncomes = async () => {
         );
         if (previewInvoiceBtn) {
           previewInvoiceBtn.addEventListener("click", () =>
-            handleOpenInvoicePreview(income.invoice_path)
+            handleOpenInvoicePreview(expense.invoice_path)
           );
         }
 
@@ -359,26 +365,26 @@ const fetchIncomes = async () => {
           removeInvoiceBtn.addEventListener("click", handleDeleteImage);
         }
 
-        incomeModal.show();
-        incomeModalMode = "edit";
+        expenseModal.show();
+        expenseModalMode = "edit";
       });
     });
 
-    document.querySelectorAll(".delete-income-btn").forEach((btn, index) => {
+    document.querySelectorAll(".delete-expense-btn").forEach((btn, index) => {
       btn.addEventListener("click", async () => {
-        const income = data[index];
+        const expense = data[index];
         const formattedAmount = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
-        }).format(income.amount);
+        }).format(expense.amount);
 
         const { isConfirmed } = await confirmAction(
           "Confirmar eliminación",
-          `¿Estás seguro de que deseas eliminar la entrada con un valor de ${formattedAmount}? Esta acción no se puede deshacer.`
+          `¿Estás seguro de que deseas eliminar el gasto con un valor de ${formattedAmount}? Esta acción no se puede deshacer.`
         );
 
         if (isConfirmed) {
-          deleteIncome(income.id);
+          deleteExpense(expense.id);
         }
       });
     });

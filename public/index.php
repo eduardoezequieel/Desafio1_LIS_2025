@@ -12,8 +12,8 @@ switch ($url) {
     case 'dashboard/users':
         require_once __DIR__ . '/../views/dashboard/users.php';
         break;
-    case 'dashboard/incomes':
-        require_once __DIR__ . '/../views/dashboard/incomes.php';
+    case 'dashboard/transactions':
+        require_once __DIR__ . '/../views/dashboard/transactions.php';
         break;
     default:
         http_response_code(404);
