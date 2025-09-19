@@ -2,10 +2,30 @@
 
 namespace App\Helpers;
 
+/**
+ * Helper de layout para el dashboard:
+ * - Valida sesión antes de renderizar.
+ * - Evita duplicación de HTML (DRY).
+ * - Inyecta estilos y scripts específicos por vista.
+ * Ampliable: soporte para breadcrumbs, roles, multi-idioma.
+ */
 class DashboardPage
 {
+    /**
+     * Prints initial HTML, validates session and builds sidebar.
+     * @param string $title
+     * @param array $styles Array of stylesheet URLs.
+     */
     public static function getSidebarTemplate(string $title, array $styles): void
     {
+        /**
+         * Flujo:
+         * 1. Inicia sesión (session_start).
+         * 2. Redirige a login si usuario no está autenticado.
+         * 3. Construye sidebar con link activo basado en REQUEST_URI.
+         * 4. Inserta estilos pasados como arreglo.
+         */
+
         $currentUrl = $_SERVER['REQUEST_URI'];
 
         require_once __DIR__ . '/../models/user.php';
@@ -56,8 +76,23 @@ class DashboardPage
         ');
     }
 
+    /**
+     * Prints top navigation header with dynamic action buttons.
+     * @param string $title
+     * @param array $buttons Each: ['class','text','id','onClick','type']
+     */
     public static function getHeaderTemplate(string $title, array $buttons = []): void
     {
+        /**
+         * Genera encabezado flexible.
+         * Cada botón soporta:
+         *  - class: Clase Bootstrap.
+         *  - text: Etiqueta visible.
+         *  - id: Para JS.
+         *  - onClick: Acción inline opcional.
+         *  - type: type="button|submit".
+         */
+
         $buttonsHtml = '';
 
         if (empty($buttons)) {
@@ -88,8 +123,18 @@ class DashboardPage
         ');
     }
 
+    /**
+     * Prints common JS libraries + page specific scripts.
+     * @param array $scripts
+     */
     public static function getFooterTemplate(array $scripts): void
     {
+        /**
+         * Inserta librerías base (Bootstrap, SweetAlert2, utilidades)
+         * y luego scripts específicos de la vista.
+         * Mejora futura: versión hash para cache busting.
+         */
+
         $scriptsHtml = '';
 
         foreach ($scripts as $script) {

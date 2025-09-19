@@ -1,3 +1,7 @@
+/* 
+ * Income / invoice upload preview styles.
+ * Shared by incomes & expenses (and transactions when needed).
+ */
 .invoice-preview {
   max-height: 150px;
   width: 100%;
@@ -9,6 +13,7 @@
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
+  background-color: #37374d;
 }
 
 .invoice-preview:hover {
@@ -27,5 +32,6 @@
   justify-content: center;
   align-items: center;
   padding: 10px;
+  /* Texto guía (placeholder) */
   color: #9a9fa3;
 }

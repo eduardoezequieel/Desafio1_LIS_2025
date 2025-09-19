@@ -1,4 +1,9 @@
 <?php
+/**
+ * Vista específica de Salidas (gastos).
+ * Nota: Sistema ahora cuenta con vista unificada (transactions.php).
+ * Esta se mantiene por compatibilidad / navegación previa.
+ */
 use App\Helpers\DashboardPage;
 
 require_once __DIR__ . '/../../app/helpers/DashboardPage.php';

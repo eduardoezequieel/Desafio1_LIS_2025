@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Controlador API de transacciones (Incomes + Expenses en una tabla).
+ * Principios:
+ *  - Acciones definidas por ?action=
+ *  - Respuesta JSON uniforme: { message, exception, data? }
+ *  - Códigos HTTP coherentes (200, 201, 400, 403, 404, 500)
+ *  - Manejo de archivo (factura) opcional con eliminación segura al borrar.
+ * Mejoras futuras:
+ *  - Paginación / filtros avanzados (rango fechas, monto).
+ *  - Validación MIME real del archivo (finfo).
+ *  - Control de tamaño desde php.ini.
+ */
+
 require_once __DIR__ . '/../config/Validator.php';
 require_once __DIR__ . '/../models/TransactionCategory.php';
 require_once __DIR__ . '/../models/Transaction.php';
@@ -20,6 +33,7 @@ if (isset($_GET['action'])) {
     if (isset($_SESSION['user'])) {
         switch ($_GET['action']) {
             case 'getCategories':
+                // Lista categorías (opcionalmente filtradas por tipo).
                 $type = isset($_GET['type']) ? $_GET['type'] : null;
                 $transactionCategory = TransactionCategory::empty();
                 $categories = $transactionCategory->getCategories($type);
@@ -35,6 +49,7 @@ if (isset($_GET['action'])) {
                 break;
 
             case 'getTransactions':
+                // Devuelve transacciones (todas o filtradas por tipo).
                 $type = isset($_GET['type']) ? $_GET['type'] : null;
                 $transaction = Transaction::empty();
                 $transactions = $transaction->getTransactions($type);
@@ -50,6 +65,10 @@ if (isset($_GET['action'])) {
                 break;
 
             case 'createTransaction':
+                // Alta de transacción:
+                //  - transaction_type requerido (income|expense)
+                //  - Validación de campos en modelo.
+                //  - Manejo de archivo si existe
                 $currentUserId = $_SESSION['user']->getId();
                 $_POST = Validator::validateForm($_POST);
 
@@ -107,6 +126,10 @@ if (isset($_GET['action'])) {
                 break;
 
             case 'updateTransaction':
+                // Actualización:
+                //  - Conserva tipo (no editable).
+                //  - Si sube nueva factura elimina la anterior.
+                // Preserves old invoice if no new file uploaded
                 $currentUserId = $_SESSION['user']->getId();
                 $_POST = Validator::validateForm($_POST);
 
@@ -188,6 +211,8 @@ if (isset($_GET['action'])) {
                 break;
 
             case 'deleteTransaction':
+                // Eliminación lógica + file unlink si aplica.
+                // Deletes transaction and attached file (model method)
                 $_GET = Validator::validateForm($_GET);
                 $transaction = Transaction::empty();
                 $transactionId = $_GET['id'] ?? null;
@@ -207,6 +232,7 @@ if (isset($_GET['action'])) {
                 break;
 
             default:
+                // Acción no soportada.
                 $result['exception'] = 'Acción no disponible';
                 http_response_code(403);
                 break;

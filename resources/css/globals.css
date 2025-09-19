@@ -1,4 +1,12 @@
+/* 
+ * Estilos globales:
+ * - Sobrescribe variables de Bootstrap (tema oscuro).
+ * - Define la paleta principal (#eb5c91).
+ * - Ajusta modales, botones y tipografía base.
+ * Nota: !important se usa para asegurar precedencia sobre Bootstrap.
+ */
 :root {
+  /* Fondo base oscuro */
   --bs-body-bg: #2e2e47 !important;
 }
 

@@ -1,0 +1,102 @@
+.dashboard-container {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-cards .card {
+  background: #37374d !important;
+  border: 1px solid #495057;
+}
+
+.card-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.income-card .card-value {
+  color: var(--bs-success);
+}
+
+.expense-card .card-value {
+  color: var(--bs-danger);
+}
+
+.balance-card .card-value {
+  color: var(--bs-info);
+}
+
+.chart-section {
+  margin-bottom: 2rem;
+}
+
+.chart-section .card {
+  background: #37374d !important;
+  border: 1px solid #495057;
+}
+
+.chart-section .card-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+#transactionChart {
+  max-width: 400px !important;
+  max-height: 400px !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+.tables-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.tables-section .card {
+  background: #37374d !important;
+  border: 1px solid #495057;
+}
+
+.card-header {
+  background: #2e2e47 !important;
+  border-bottom: 1px solid #495057;
+}
+
+@media (max-width: 768px) {
+  .tables-section {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  #transactionChart {
+    max-width: 300px !important;
+    max-height: 300px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #transactionChart {
+    max-width: 250px !important;
+    max-height: 250px !important;
+  }
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}

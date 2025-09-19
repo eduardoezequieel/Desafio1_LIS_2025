@@ -1,3 +1,10 @@
+/**
+ * Módulo de gestión de usuarios:
+ * - Alta / edición mediante modal reutilizable.
+ * - Eliminación con confirmación.
+ * - Refresco de tabla tras cada acción.
+ * - Uso de SweetAlert2 para feedback consistente.
+ */
 const addBtn = document.getElementById("new-user-btn");
 const form = document.getElementById("user-form");
 const userLabel = document.getElementById("user-modal-label");
@@ -6,6 +13,12 @@ const userModal = new bootstrap.Modal(document.getElementById("userModal"));
 let userModalMode = "create"; // 'create' o 'edit'
 
 addBtn.addEventListener("click", () => {
+  /**
+   * Flujo "Crear":
+   * - Limpia el formulario.
+   * - Cambia el modo a create.
+   * - Abre modal.
+   */
   form.reset();
   userModal.show();
   userModalMode = "create";
@@ -15,6 +28,12 @@ addBtn.addEventListener("click", () => {
 saveUserBtn.addEventListener("click", () => form.requestSubmit());
 
 form.addEventListener("submit", async (e) => {
+  /**
+   * Envío unificado (create/update):
+   * - Valida si hay ID cuando se edita.
+   * - Envía siempre como FormData (permite expansión futura).
+   * - Muestra feedback final y refresca tabla solo tras cerrar alerta.
+   */
   e.preventDefault();
 
   const formData = new FormData(form);
@@ -59,6 +78,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 const deleteUser = async (id) => {
+  /**
+   * Elimina un usuario por ID.
+   * - Método GET por compatibilidad con backend existente (ideal: DELETE).
+   * - Refresca tabla al terminar.
+   * @param {number} id Identificador del usuario.
+   */
   const formData = new FormData();
   formData.append("id", id);
 
@@ -80,6 +105,12 @@ const deleteUser = async (id) => {
   }
 };
 
+/**
+ * Obtiene y renderiza la tabla de usuarios.
+ * Consideraciones:
+ * - Si updated_at es null se muestra created_at.
+ * - No se pagina por ahora; escalable con lazy load si crece.
+ */
 const fetchUsers = async () => {
   const response = await fetch(API_USERS + "getUsers", {
     method: "GET",
@@ -96,6 +127,11 @@ const fetchUsers = async () => {
     let html = "";
 
     data.forEach((user) => {
+      /**
+       * Para cada usuario:
+       * - Calcula última actividad (updated_at || created_at).
+       * - Inserta fila con botones de acción.
+       */
       const dateTimeOptions = {
         year: "numeric",
         month: "numeric",

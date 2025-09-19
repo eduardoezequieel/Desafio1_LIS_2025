@@ -1,4 +1,9 @@
 <?php
+/**
+ * Vista de Entradas (ingresos) individual.
+ * Reemplazable por la vista unificada transactions.php.
+ * Conservada para navegabilidad y separación explícita.
+ */
 use App\Helpers\DashboardPage;
 
 require_once __DIR__ . '/../../app/helpers/DashboardPage.php';

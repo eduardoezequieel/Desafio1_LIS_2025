@@ -1,3 +1,11 @@
+/**
+ * Módulo de gastos (transaction_type=expense):
+ * - CRUD completo vía API unificada.
+ * - Manejo de factura (archivo opcional).
+ * - Resiliente a ausencia de archivo / reemplazo de archivo.
+ * - Validación básica de formato y tamaño (5MB).
+ */
+
 const API_TRANSACTIONS = "/Desafio1_LIS_2025/app/api/transactions.php?action=";
 
 const addBtn = document.getElementById("new-expense-btn");
@@ -33,6 +41,13 @@ const handleDeleteImage = (e) => {
 };
 
 const handleUpdateImage = (file) => {
+  /**
+   * Valida y carga vista previa del archivo.
+   * Reglas:
+   *  - Tipos permitidos: JPG / PNG / GIF / WEBP.
+   *  - Tamaño máximo: 5 MB.
+   * Si falla, limpia input y muestra alerta.
+   */
   const maxFileSize = 5 * 1024 * 1024; // 5MB
   if (!file || !(file instanceof File)) return;
 
@@ -104,6 +119,12 @@ invoicePreviewFileContainer.addEventListener("dragleave", () => {
 saveExpenseBtn.addEventListener("click", () => form.requestSubmit());
 
 form.addEventListener("submit", async (e) => {
+  /**
+   * Flujo envío:
+   *  - Añade transaction_type=expense.
+   *  - Si edición sin archivo nuevo -> conserva ruta previa.
+   *  - Muestra mensaje contextual según resultado.
+   */
   e.preventDefault();
 
   const formData = new FormData(form);
@@ -190,6 +211,10 @@ const deleteExpense = async (id) => {
 };
 
 const resetForm = () => {
+  /**
+   * Reset form and file preview state (create mode).
+   */
+
   form.reset();
   invoicePreviewFileContainer.innerHTML = `
     <span>Haz clic para subir o arrastra para subir una imagen</span>
@@ -199,6 +224,11 @@ const resetForm = () => {
 };
 
 const fetchExpenseTypes = async () => {
+  /**
+   * Carga las categorías filtradas por ?type=expense.
+   * No cachea localmente (posible mejora futura).
+   */
+
   const response = await fetch(
     API_TRANSACTIONS + "getCategories&type=expense",
     {
@@ -227,6 +257,11 @@ const fetchExpenseTypes = async () => {
 };
 
 const handleOpenInvoicePreview = (image) => {
+  /**
+   * Open invoice preview (file or stored path).
+   * @param {File|string} image
+   */
+
   if (image instanceof File) {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -253,6 +288,15 @@ const handleOpenInvoicePreview = (image) => {
 };
 
 const fetchExpenses = async () => {
+  /**
+   * Obtiene listado de gastos.
+   * Casos:
+   *  - 200/201 con datos.
+   *  - 404 sin registros (muestra fila vacía).
+   *  - Otros códigos => error.
+   * Ajusta fecha manualmente para evitar desfase por zona horaria.
+   */
+
   const response = await fetch(
     API_TRANSACTIONS + "getTransactions&type=expense",
     {
@@ -316,6 +360,11 @@ const fetchExpenses = async () => {
     tbody.innerHTML = html;
 
     document.querySelectorAll(".edit-expense-btn").forEach((btn, index) => {
+      /**
+       * Editar:
+       * - Carga valores en modal.
+       * - Prepara previsualización si existe factura.
+       */
       btn.addEventListener("click", () => {
         resetForm();
         expenseLabel.textContent = "Editar gasto";

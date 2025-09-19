@@ -9,6 +9,7 @@
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
+  background-color: #37374d;
 }
 
 .invoice-preview:hover {

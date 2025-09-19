@@ -1,3 +1,14 @@
+/**
+ * Vista unificada de transacciones:
+ * - Tabla con filtro (todas / ingresos / gastos).
+ * - Dos modales independientes (ingreso / gasto).
+ * - Reutiliza mismo endpoint (transaction_type define comportamiento).
+ * - Manejo de archivos por transacción (factura).
+ * Ventajas:
+ *  - Menos duplicación que incomes.js / expenses.js separados.
+ *  - UX consistente.
+ */
+
 const API_TRANSACTIONS = "/Desafio1_LIS_2025/app/api/transactions.php?action=";
 
 // UI Elements
@@ -75,8 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchTransactions();
 });
 
-// Functions
+/**
+ * Filter selector and table re-render.
+ * @param {'all'|'income'|'expense'} filter
+ */
 function setFilter(filter) {
+  /**
+   * Cambia el filtro activo y repinta la tabla.
+   * @param {'all'|'income'|'expense'} filter
+   */
   currentFilter = filter;
 
   // Update button states
@@ -89,7 +107,18 @@ function setFilter(filter) {
   displayTransactions(allTransactions);
 }
 
+/**
+ * Generic submit handler for both forms.
+ * @param {SubmitEvent} e
+ * @param {'income'|'expense'} type
+ */
 async function handleFormSubmit(e, type) {
+  /**
+   * Manejo genérico de formularios (ingreso/gasto).
+   * - Añade transaction_type según modal invocante.
+   * - Conserva factura anterior si no se sube una nueva.
+   * - Muestra mensajes según resultado.
+   */
   e.preventDefault();
 
   const form = type === "income" ? incomeForm : expenseForm;
@@ -154,7 +183,16 @@ async function handleFormSubmit(e, type) {
   }
 }
 
+/**
+ * Configure drag/drop + preview for invoice upload.
+ */
 function setupFileUpload(input, preview, type) {
+  /**
+   * Configura drag & drop + validaciones + vista previa.
+   * @param {HTMLInputElement} input
+   * @param {HTMLElement} preview
+   * @param {'income'|'expense'} type
+   */
   const handleUpdateImage = (file) => {
     const maxFileSize = 5 * 1024 * 1024; // 5MB
     if (!file || !(file instanceof File)) return;
@@ -236,50 +274,14 @@ function setupFileUpload(input, preview, type) {
   );
 }
 
-function resetIncomeForm() {
-  incomeForm.reset();
-  incomeInvoicePreview.innerHTML = `<span>Haz clic para subir o arrastra para subir una imagen</span>`;
-  incomeInvoiceInput.value = "";
-  currentIncomeInvoicePath = null;
-}
-
-function resetExpenseForm() {
-  expenseForm.reset();
-  expenseInvoicePreview.innerHTML = `<span>Haz clic para subir o arrastra para subir una imagen</span>`;
-  expenseInvoiceInput.value = "";
-  currentExpenseInvoicePath = null;
-}
-
-async function fetchCategories() {
-  try {
-    const [incomeResponse, expenseResponse] = await Promise.all([
-      fetch(API_TRANSACTIONS + "getCategories&type=income"),
-      fetch(API_TRANSACTIONS + "getCategories&type=expense"),
-    ]);
-
-    if (incomeResponse.ok) {
-      const { data: incomeCategories } = await incomeResponse.json();
-      let html = "";
-      incomeCategories.forEach((category) => {
-        html += `<option value="${category.id}">${category.name}</option>`;
-      });
-      incomeCategorySelect.innerHTML = html;
-    }
-
-    if (expenseResponse.ok) {
-      const { data: expenseCategories } = await expenseResponse.json();
-      let html = "";
-      expenseCategories.forEach((category) => {
-        html += `<option value="${category.id}">${category.name}</option>`;
-      });
-      expenseCategorySelect.innerHTML = html;
-    }
-  } catch (error) {
-    showMessage("error", "Error", "Error cargando categorías");
-  }
-}
-
+/**
+ * Fetch all transactions; local filtering done client-side.
+ */
 async function fetchTransactions() {
+  /**
+   * Trae todas las transacciones (sin filtro en servidor).
+   * Filtrado posterior en cliente para mayor fluidez.
+   */
   try {
     const response = await fetch(API_TRANSACTIONS + "getTransactions");
 
@@ -296,7 +298,15 @@ async function fetchTransactions() {
   }
 }
 
+/**
+ * Paint table with filtered transactions.
+ */
 function displayTransactions(transactions) {
+  /**
+   * Renderiza la tabla según filtro activo.
+   * - Aplica color según tipo.
+   * - Muestra estado vacío si no hay registros.
+   */
   const tbody = document.querySelector("#transactions-table-body");
 
   // Filter transactions based on current filter
@@ -392,6 +402,11 @@ function setupTableEventListeners(transactions) {
 }
 
 function editTransaction(transaction, type) {
+  /**
+   * Carga datos en el modal adecuado.
+   * - Resetea primero para evitar 'data bleed'.
+   * - Prepara previsualización de factura si existe.
+   */
   if (type === "income") {
     resetIncomeForm();
     incomeLabel.textContent = "Editar entrada";
@@ -466,6 +481,9 @@ function setupExistingInvoice(preview, input, invoicePath, type) {
   input.value = "";
 }
 
+/**
+ * Delete transaction after confirmation.
+ */
 async function deleteTransaction(transaction, type) {
   const formattedAmount = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -502,6 +520,9 @@ async function deleteTransaction(transaction, type) {
   }
 }
 
+/**
+ * Open invoice preview in a new tab/window.
+ */
 function handleOpenInvoicePreview(image) {
   if (image instanceof File) {
     const reader = new FileReader();
@@ -519,5 +540,57 @@ function handleOpenInvoicePreview(image) {
     anchorTag.target = "_blank";
     anchorTag.rel = "noopener noreferrer";
     anchorTag.click();
+  }
+}
+
+/**
+ * Reset income form to default state.
+ */
+function resetIncomeForm() {
+  incomeForm.reset();
+  incomeInvoicePreview.innerHTML = `<span>Haz clic para subir o arrastra para subir una imagen</span>`;
+  incomeInvoiceInput.value = "";
+  currentIncomeInvoicePath = null;
+}
+
+/**
+ * Reset expense form to default state.
+ */
+function resetExpenseForm() {
+  expenseForm.reset();
+  expenseInvoicePreview.innerHTML = `<span>Haz clic para subir o arrastra para subir una imagen</span>`;
+  expenseInvoiceInput.value = "";
+  currentExpenseInvoicePath = null;
+}
+
+/**
+ * Fetch and populate category selects for income and expense.
+ */
+async function fetchCategories() {
+  try {
+    const [incomeResponse, expenseResponse] = await Promise.all([
+      fetch(API_TRANSACTIONS + "getCategories&type=income"),
+      fetch(API_TRANSACTIONS + "getCategories&type=expense"),
+    ]);
+
+    if (incomeResponse.ok) {
+      const { data: incomeCategories } = await incomeResponse.json();
+      let html = "";
+      incomeCategories.forEach((category) => {
+        html += `<option value="${category.id}">${category.name}</option>`;
+      });
+      incomeCategorySelect.innerHTML = html;
+    }
+
+    if (expenseResponse.ok) {
+      const { data: expenseCategories } = await expenseResponse.json();
+      let html = "";
+      expenseCategories.forEach((category) => {
+        html += `<option value="${category.id}">${category.name}</option>`;
+      });
+      expenseCategorySelect.innerHTML = html;
+    }
+  } catch (error) {
+    showMessage("error", "Error", "Error cargando categorías");
   }
 }
