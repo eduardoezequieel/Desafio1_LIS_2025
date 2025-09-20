@@ -5,17 +5,62 @@ namespace App\Config;
 use PDO;
 use PDOException;
 
+/**
+ * Clase Database - Manejo de conexiones y operaciones de base de datos
+ * 
+ * Esta clase proporciona métodos estáticos para gestionar la conexión a la base de datos
+ * y realizar operaciones CRUD utilizando PDO con MySQL.
+ * 
+ * @author Tu Nombre
+ * @version 1.0
+ * @since 2025
+ */
 class Database
 {
+    /**
+     * @var string $host Dirección del servidor de base de datos
+     */
     private static string $host = "localhost";
+    
+    /**
+     * @var string $db_name Nombre de la base de datos
+     */
     private static string $db_name  = "Desafio1LIS";
+    
+    /**
+     * @var string $username Nombre de usuario para la conexión
+     */
     private static string $username = "root";
+    
+    /**
+     * @var string $password Contraseña para la conexión
+     */
     private static string $password = "";
+    
+    /**
+     * @var PDOStatement|null $statement Declaración PDO para consultas preparadas
+     */
     private static $statement = null;
+    
+    /**
+     * @var string|null $error Almacena el último mensaje de error
+     */
     private static $error = null;
 
+    /**
+     * @var PDO|null $connection Instancia de conexión PDO singleton
+     */
     private static ?PDO $connection = null;
 
+    /**
+     * Establece la conexión con la base de datos utilizando PDO
+     * 
+     * Implementa el patrón singleton para asegurar una única instancia de conexión.
+     * Si la conexión no existe, la crea con las configuraciones predefinidas.
+     * 
+     * @return void
+     * @throws PDOException Si hay error en la conexión a la base de datos
+     */
     public static function connect()
     {
         if (self::$connection === null) {
@@ -34,7 +79,16 @@ class Database
         }
     }
 
-    //Método para leer todos los datos
+    /**
+     * Obtiene múltiples registros de la base de datos
+     * 
+     * Ejecuta una consulta SQL preparada y retorna todos los registros encontrados.
+     * Utiliza fetch mode FETCH_ASSOC para retornar arrays asociativos.
+     * 
+     * @param string $query Consulta SQL con marcadores de posición
+     * @param array|null $values Valores para los marcadores de posición
+     * @return array|false Array de registros encontrados o false en caso de error
+     */
     public static function getRows($query, $values)
     {
         try {
@@ -51,7 +105,16 @@ class Database
         }
     }
 
-    /*Metodo para ejecutar operaciones SQL*/
+    /**
+     * Ejecuta operaciones SQL de modificación (INSERT, UPDATE, DELETE)
+     * 
+     * Prepara y ejecuta una consulta SQL que modifica datos en la base de datos.
+     * No retorna registros, solo el estado de la operación.
+     * 
+     * @param string $query Consulta SQL con marcadores de posición
+     * @param array|null $values Valores para los marcadores de posición
+     * @return bool true si la operación fue exitosa, false en caso de error
+     */
     public static function executeRow($query, $values)
     {
         try {
@@ -68,6 +131,16 @@ class Database
         }
     }
 
+    /**
+     * Obtiene un único registro de la base de datos
+     * 
+     * Ejecuta una consulta SQL preparada y retorna el primer registro encontrado.
+     * Utiliza fetch mode FETCH_ASSOC para retornar un array asociativo.
+     * 
+     * @param string $query Consulta SQL con marcadores de posición
+     * @param array|null $values Valores para los marcadores de posición
+     * @return array|false Array asociativo del registro encontrado o false en caso de error
+     */
     public static function getRow($query, $values)
     {
         try {
@@ -84,7 +157,16 @@ class Database
         }
     }
 
-    //Método para excepciones
+    /**
+     * Establece mensajes de error personalizados para códigos de excepción específicos
+     * 
+     * Convierte códigos de error técnicos de MySQL en mensajes amigables al usuario.
+     * Los códigos más comunes están mapeados a mensajes descriptivos.
+     * 
+     * @param string|int $code Código de error MySQL
+     * @param string $message Mensaje de error original de PDO
+     * @return void
+     */
     public static function setException($code, $message)
     {
         // Se asigna el mensaje del error original por si se necesita.
@@ -116,6 +198,14 @@ class Database
         }
     }
 
+    /**
+     * Obtiene el último mensaje de error registrado
+     * 
+     * Retorna el último error establecido por el método setException.
+     * Útil para obtener información sobre errores ocurridos durante las operaciones.
+     * 
+     * @return string|null Mensaje de error o null si no hay errores
+     */
     public static function getException()
     {
         return self::$error;
