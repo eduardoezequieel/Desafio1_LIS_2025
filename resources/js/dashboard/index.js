@@ -1,7 +1,7 @@
 /**
  * Dashboard (index):
  * - Obtiene todas las transacciones.
- * - Calcula totales (ingresos, gastos, balance).
+ * - Calcula totales (entradas, salidas, balance).
  * - Muestra gráfico (pie) y tablas resumidas.
  * - Genera PDF con resumen, gráfico e información detallada.
  * Detalles:
@@ -99,7 +99,7 @@ function updateChart() {
   /**
    * Construye gráfico en canvas principal.
    * - Si no hay datos: muestra "Sin datos".
-   * - Colores alineados al esquema (verde ingresos, rojo gastos).
+   * - Colores alineados al esquema (verde entradas, rojo salidas).
    */
   const ctx = document.getElementById("transactionChart").getContext("2d");
 
@@ -113,7 +113,7 @@ function updateChart() {
   transactionChart = new Chart(ctx, {
     type: "pie",
     data: {
-      labels: hasData ? ["Ingresos", "Gastos"] : ["Sin datos"],
+      labels: hasData ? ["Entradas", "Salidas"] : ["Sin datos"],
       datasets: [
         {
           data: hasData
@@ -202,7 +202,7 @@ function updateExpenseTable() {
 
   if (dashboardData.expenses.length === 0) {
     tbody.innerHTML =
-      '<tr><td colspan="3" class="text-center">No hay gastos registrados</td></tr>';
+      '<tr><td colspan="3" class="text-center">No hay salidas registradas</td></tr>';
     return;
   }
 
@@ -306,7 +306,7 @@ function generatePDFReport() {
   doc.setFontSize(10);
   doc.setTextColor(21, 128, 61); // Dark green text
   doc.setFont(undefined, "bold");
-  doc.text("TOTAL INGRESOS", 22, yPosition + 8);
+  doc.text("TOTAL ENTRADAS", 22, yPosition + 8);
   doc.setFontSize(14);
   doc.setFont(undefined, "bold");
   doc.text(formatter.format(dashboardData.totalIncome), 22, yPosition + 18);
@@ -321,7 +321,7 @@ function generatePDFReport() {
   doc.setTextColor(185, 28, 28); // Dark red text
   doc.setFontSize(10);
   doc.setFont(undefined, "bold");
-  doc.text("TOTAL GASTOS", expenseX + 2, yPosition + 8);
+  doc.text("TOTAL SALIDAS", expenseX + 2, yPosition + 8);
   doc.setFontSize(14);
   doc.setFont(undefined, "bold");
   doc.text(
@@ -390,7 +390,7 @@ function generatePDFReport() {
     const tempChart = new Chart(tempCtx, {
       type: "pie",
       data: {
-        labels: ["Ingresos", "Gastos"],
+        labels: ["Entradas", "Salidas"],
         datasets: [
           {
             data: [dashboardData.totalIncome, dashboardData.totalExpenses],
@@ -486,7 +486,7 @@ function continuePDFGeneration(doc, yPosition, formatter) {
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
   doc.setFont(undefined, "bold");
-  doc.text("DETALLE DE INGRESOS", 20, yPosition);
+  doc.text("DETALLE DE ENTRADAS", 20, yPosition);
   yPosition += 15;
 
   if (dashboardData.incomes.length > 0) {
@@ -545,12 +545,12 @@ function continuePDFGeneration(doc, yPosition, formatter) {
     doc.setDrawColor(34, 197, 94);
     doc.rect(20, yPosition - 3, 170, 12);
     doc.setFont(undefined, "bold");
-    doc.text("TOTAL INGRESOS:", 120, yPosition + 3);
+    doc.text("TOTAL ENTRADAS:", 120, yPosition + 3);
     doc.setTextColor(21, 128, 61);
     doc.text(formatter.format(dashboardData.totalIncome), 160, yPosition + 3);
   } else {
     doc.setTextColor(75, 85, 99);
-    doc.text("No hay ingresos registrados", 25, yPosition);
+    doc.text("No hay entradas registradas", 25, yPosition);
   }
 
   yPosition += 25;
@@ -565,7 +565,7 @@ function continuePDFGeneration(doc, yPosition, formatter) {
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(16);
   doc.setFont(undefined, "bold");
-  doc.text("DETALLE DE GASTOS", 20, yPosition);
+  doc.text("DETALLE DE SALIDAS", 20, yPosition);
   yPosition += 15;
 
   if (dashboardData.expenses.length > 0) {
@@ -624,12 +624,12 @@ function continuePDFGeneration(doc, yPosition, formatter) {
     doc.setDrawColor(239, 68, 68);
     doc.rect(20, yPosition - 3, 170, 12);
     doc.setFont(undefined, "bold");
-    doc.text("TOTAL GASTOS:", 120, yPosition + 3);
+    doc.text("TOTAL SALIDAS:", 120, yPosition + 3);
     doc.setTextColor(185, 28, 28);
     doc.text(formatter.format(dashboardData.totalExpenses), 160, yPosition + 3);
   } else {
     doc.setTextColor(75, 85, 99);
-    doc.text("No hay gastos registrados", 25, yPosition);
+    doc.text("No hay salidas registradas", 25, yPosition);
   }
 
   // Footer

@@ -14,7 +14,7 @@ DashboardPage::getHeaderTemplate('Transacciones', [
     ],
     [
         'class' => 'btn-danger',
-        'text' => 'Nuevo Gasto',
+        'text' => 'Nueva Salida',
         'id' => 'new-expense-btn',
     ]
 ]);
@@ -24,7 +24,7 @@ DashboardPage::getHeaderTemplate('Transacciones', [
             <div class="btn-group" role="group" aria-label="Transaction filters">
                 <button type="button" class="btn btn-outline-primary active" id="filter-all">Todas</button>
                 <button type="button" class="btn btn-outline-success" id="filter-income">Entradas</button>
-                <button type="button" class="btn btn-outline-danger" id="filter-expense">Gastos</button>
+                <button type="button" class="btn btn-outline-danger" id="filter-expense">Salidas</button>
             </div>
         </div>
         
@@ -98,7 +98,7 @@ DashboardPage::getHeaderTemplate('Transacciones', [
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="expense-modal-label">Registrar gasto</h1>
+                    <h1 class="modal-title fs-5" id="expense-modal-label">Registrar Salida</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -133,7 +133,7 @@ DashboardPage::getHeaderTemplate('Transacciones', [
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="save-expense-btn" type="button" class="btn btn-danger">Guardar gasto</button>
+                    <button id="save-expense-btn" type="button" class="btn btn-danger">Guardar salida</button>
                 </div>
             </div>
         </div>
